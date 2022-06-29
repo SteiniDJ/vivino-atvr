@@ -1,5 +1,7 @@
-# vivino-systembolaget
-Chrome extension to show vivino score on systembolaget website
+# This extension is not ready
+
+# vivino-atvr
+Chrome extension to show vivino score on atvr website
 
 ![Screenshot](https://lazyd3v.com/images/systembolaget-screen.png "Screenshot")
 
