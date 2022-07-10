@@ -1,4 +1,5 @@
 export default function getRating(query) {
+
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage(
       { type: "getRating", query },

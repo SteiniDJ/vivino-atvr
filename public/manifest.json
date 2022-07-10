@@ -3,10 +3,11 @@
   "version": "1.0.2",
   "description": "Show wine rating on systembolaget website",
   "manifest_version": 2,
-  "permissions": ["*://www.vivino.com/*", "unlimitedStorage", "activeTab"],
+  "permissions": ["*://www.vivino.com/*", "unlimitedStorage", "activeTab",
+  "storage"],
   "content_scripts": [
     {
-      "matches": ["https://www.systembolaget.se/*"],
+      "matches": ["https://www.vinbudin.is/*"],
       "js": ["contentScript.js"]
     }
   ],

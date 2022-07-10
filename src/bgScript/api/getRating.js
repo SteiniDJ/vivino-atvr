@@ -1,7 +1,7 @@
 import cheerio from "cheerio";
 import { axios } from "./axios";
 
-const extractRating = (html, query) => {
+const extractRating = (html, wineId) => {
   const $ = cheerio.load(html);
 
   let wines = [];
@@ -26,21 +26,52 @@ const extractRating = (html, query) => {
       return;
     }
 
-    wines.push({
+    const wine = {
       name,
       score: parseFloat(score),
       numOfReviews: parseFloat(numOfReviews),
       url,
+      id: wineId,
+    };
+
+    chrome.storage.local.set({
+      [wineId]: wine,
     });
+
+    wines.push(wine);
   });
 
   return wines[0];
 };
 
-export default async function getRating(query) {
-  const response = await axios.get(
-    `/search/wines?q=${encodeURIComponent(query)}`
-  );
+const getFromLocal = (wineId) =>
+  new Promise((resolve, reject) => {
+    chrome.storage.local.get([wineId], (items) => {
+      const data = Object.values(items)[0];
+      // Check if data is older then a week
+      if (data) {
+        const weekUnix = 604800000;
+        const monthUnix = weekUnix * 4;
+        const weekAgoUnix = Date.now() - monthUnix;
+        if (weekAgoUnix > data.date) resolve(undefined);
+      }
+      resolve(data);
+    });
+  });
 
-  return extractRating(response.data, query);
+export default async function getRating(query) {
+  let data = await getFromLocal(query.wineId);
+
+  if (data) {
+    // we have data! No need to extract or scrape
+
+    return data;
+  }
+  if (!data) {
+    data = await axios.get(
+      `/search/wines?q=${encodeURIComponent(query.wineName)}`
+    );
+  }
+
+  return extractRating(data.data, query.wineId);
 }
